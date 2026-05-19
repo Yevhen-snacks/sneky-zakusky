@@ -3,379 +3,501 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Snack Zone</title>
+<title>Snack Zone — Снеки до пива</title>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
+/* ════════════════════════════════════════
+   ЗМІННІ КОЛЬОРІВ
+════════════════════════════════════════ */
 :root {
-  --dark: #181c20;
-  --card: #22272d;
-  --card2: #2a3039;
+  --dark:   #181c20;
+  --card:   #22272d;
+  --card2:  #2a3039;
   --accent: #f5a623;
-  --accent2: #e8442a;
-  --text: #f0ebe3;
-  --muted: #7a8390;
+  --accent2:#e8442a;
+  --text:   #f0ebe3;
+  --muted:  #7a8390;
   --border: #2e3740;
-  --green: #3dba6f;
-  --radius: 16px;
+  --green:  #3dba6f;
+  --nav-h:  62px;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; }
-body { background: var(--dark); color: var(--text); font-family: 'Nunito', sans-serif; overflow-x: hidden; }
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+html,body { height:100%; }
+body { background:var(--dark); color:var(--text); font-family:'Nunito',sans-serif; overflow-x:hidden; }
 
-/* ── HEADER ── */
+/* ════ HEADER ════ */
 .header {
-  background: var(--card);
-  border-bottom: 2px solid var(--accent);
-  padding: 10px 14px;
-  position: sticky; top: 0; z-index: 100;
-  display: flex; align-items: center; justify-content: space-between;
+  background:var(--card); border-bottom:2px solid var(--accent);
+  padding:10px 14px; position:sticky; top:0; z-index:100;
+  display:flex; align-items:center; justify-content:space-between;
 }
-.logo { display: flex; align-items: center; gap: 10px; }
-.logo-badge {
-  width: 38px; height: 38px; border-radius: 10px;
-  background: linear-gradient(135deg, var(--accent), #e8831a);
-  display: flex; align-items: center; justify-content: center; font-size: 20px;
+.logo { display:flex; align-items:center; gap:10px; }
+
+/* ── ЛОГО: якщо картинка не завантажилась — показується запасний значок ── */
+.logo-img  { height:38px; width:auto; border-radius:8px; display:block; }
+.logo-fallback {
+  width:38px; height:38px; border-radius:10px; display:none;
+  background:linear-gradient(135deg,var(--accent),#e8831a);
+  align-items:center; justify-content:center; font-size:20px;
 }
-.logo-name { font-family: 'Oswald', sans-serif; font-size: 17px; font-weight: 700; letter-spacing: 1px; }
-.logo-tag { font-size: 10px; color: var(--muted); letter-spacing: 0.3px; }
+.logo-name { font-family:'Oswald',sans-serif; font-size:17px; font-weight:700; letter-spacing:1px; }
+.logo-tag  { font-size:10px; color:var(--muted); letter-spacing:.3px; }
+
 .cart-fab {
-  position: relative; background: var(--accent); border: none; border-radius: 12px;
-  width: 44px; height: 44px; font-size: 19px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; transition: transform .15s;
+  position:relative; background:var(--accent); border:none; border-radius:12px;
+  width:44px; height:44px; font-size:19px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; transition:transform .15s;
 }
-.cart-fab:active { transform: scale(.92); }
+.cart-fab:active { transform:scale(.92); }
 .cart-badge {
-  position: absolute; top: -5px; right: -5px;
-  background: var(--accent2); color: #fff; font-size: 10px; font-weight: 800;
-  border-radius: 50%; width: 18px; height: 18px;
-  display: none; align-items: center; justify-content: center;
+  position:absolute; top:-5px; right:-5px; background:var(--accent2); color:#fff;
+  font-size:10px; font-weight:800; border-radius:50%; width:18px; height:18px;
+  display:none; align-items:center; justify-content:center;
 }
 
-/* ── BANNER ── */
+/* ════ СТОРІНКИ ════ */
+.page { display:none; padding-bottom:calc(var(--nav-h) + 16px); }
+.page.active { display:block; }
+
+/* ════ НИЖНЯ НАВІГАЦІЯ ════ */
+.bottom-nav {
+  position:fixed; bottom:0; left:0; right:0; height:var(--nav-h);
+  background:var(--card); border-top:1px solid var(--border);
+  display:flex; align-items:stretch; z-index:200;
+}
+.nav-btn {
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:2px; cursor:pointer; border:none; background:transparent; color:var(--muted);
+  font-family:'Nunito',sans-serif; font-size:9px; font-weight:700; transition:color .2s;
+}
+.nav-btn .nicon { font-size:18px; }
+.nav-btn.active  { color:var(--accent); }
+.nav-cart-badge {
+  position:absolute; top:6px; right:calc(50% - 18px);
+  background:var(--accent2); color:#fff; font-size:9px; font-weight:800;
+  border-radius:50%; width:16px; height:16px; display:none;
+  align-items:center; justify-content:center;
+}
+.nav-btn.cart-nav { position:relative; }
+
+/* ════ БАНЕР ════ */
 .banner {
-  margin: 10px 12px 0;
-  background: linear-gradient(135deg, #2a1d09 0%, #322209 100%);
-  border: 1px solid rgba(245,166,35,.25);
-  border-radius: var(--radius); padding: 12px 14px;
-  display: flex; align-items: center; gap: 10px;
+  margin:10px 12px 0; background:linear-gradient(135deg,#2a1d09,#322209);
+  border:1px solid rgba(245,166,35,.25); border-radius:16px;
+  padding:12px 14px; display:flex; align-items:center; gap:10px;
 }
-.banner-icon { font-size: 30px; flex-shrink: 0; }
-.banner h3 { font-family: 'Oswald', sans-serif; font-size: 14px; color: var(--accent); }
-.banner p { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.banner-icon { font-size:28px; flex-shrink:0; }
+.banner h3   { font-family:'Oswald',sans-serif; font-size:14px; color:var(--accent); }
+.banner p    { font-size:11px; color:var(--muted); margin-top:2px; }
 
-/* ── SEARCH ── */
-.search-row { padding: 10px 12px 4px; }
+/* ════ ПОШУК / КАТЕГОРІЇ ════ */
+.search-row { padding:10px 12px 4px; }
 .search-input {
-  width: 100%; background: var(--card); border: 1px solid var(--border);
-  border-radius: 12px; padding: 10px 14px; color: var(--text);
-  font-family: 'Nunito', sans-serif; font-size: 14px; outline: none;
-  transition: border-color .2s;
+  width:100%; background:var(--card); border:1px solid var(--border);
+  border-radius:12px; padding:10px 14px; color:var(--text);
+  font-family:'Nunito',sans-serif; font-size:14px; outline:none; transition:border-color .2s;
 }
-.search-input::placeholder { color: var(--muted); }
-.search-input:focus { border-color: var(--accent); }
+.search-input::placeholder { color:var(--muted); }
+.search-input:focus { border-color:var(--accent); }
 
-/* ── CATS ── */
 .cats {
-  display: flex; gap: 7px; overflow-x: auto;
-  padding: 8px 12px 10px; scrollbar-width: none;
+  display:grid;
+  grid-template-columns: 1fr;
+  gap:7px;
+  padding:8px 12px 10px;
 }
-.cats::-webkit-scrollbar { display: none; }
+.cats-row {
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:7px;
+}
 .cat {
-  flex-shrink: 0; background: var(--card); border: 1px solid var(--border);
-  border-radius: 20px; padding: 6px 13px; color: var(--muted);
-  font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 700;
-  cursor: pointer; transition: all .2s; white-space: nowrap;
+  background:var(--card); border:1px solid var(--border);
+  border-radius:20px; padding:8px 6px; color:var(--muted);
+  font-family:'Nunito',sans-serif; font-size:11px; font-weight:700;
+  cursor:pointer; transition:all .2s; white-space:nowrap;
+  text-align:center; width:100%;
 }
-.cat.active { background: var(--accent); border-color: var(--accent); color: #1a1f23; }
+.cat-all {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:20px; padding:8px 6px; color:var(--muted);
+  font-family:'Nunito',sans-serif; font-size:12px; font-weight:700;
+  cursor:pointer; transition:all .2s; text-align:center; width:100%;
+}
+.cat.active, .cat-all.active { background:var(--accent); border-color:var(--accent); color:#1a1f23; }
 
-/* ── SECTION TITLE ── */
 .sec-title {
-  font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 600;
-  letter-spacing: .8px; color: var(--muted); text-transform: uppercase;
-  padding: 2px 14px 8px;
+  font-family:'Oswald',sans-serif; font-size:13px; font-weight:600;
+  letter-spacing:.8px; color:var(--muted); text-transform:uppercase; padding:2px 14px 8px;
 }
 
-/* ── PRODUCT GRID ── */
-.grid {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 10px; padding: 0 12px 90px;
-}
+/* ════ СІТКА ТОВАРІВ ════ */
+.grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:0 12px 10px; }
 .p-card {
-  background: var(--card); border-radius: var(--radius);
-  border: 1px solid var(--border); overflow: hidden;
-  cursor: pointer; transition: transform .15s, border-color .2s;
-  position: relative;
+  background:var(--card); border-radius:16px; border:1px solid var(--border);
+  overflow:hidden; cursor:pointer; transition:transform .15s,border-color .2s; position:relative;
 }
-.p-card:active { transform: scale(.97); }
-.p-card.in-cart { border-color: rgba(61,186,111,.5); }
+.p-card:active { transform:scale(.97); }
+.p-card.in-cart { border-color:rgba(61,186,111,.5); }
+
+/* ── ФОТО ТОВАРУ ── */
 .p-thumb {
-  width: 100%; aspect-ratio: 1;
-  background: var(--card2);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 44px; position: relative; overflow: hidden;
+  width:100%; aspect-ratio:1; background:var(--card2);
+  display:flex; align-items:center; justify-content:center; font-size:44px;
+  position:relative; overflow:hidden;
 }
 .p-thumb img {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover; transition: opacity .3s;
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  /* зображення показується тільки якщо завантажилось */
 }
+.p-thumb .thumb-fallback {
+  /* емодзі-заглушка — видима за замовчуванням, ховається коли фото OK */
+  position:relative; z-index:1;
+}
+
 .variants-badge {
-  position: absolute; bottom: 6px; left: 6px;
-  background: rgba(0,0,0,.7); border-radius: 8px;
-  padding: 3px 7px; font-size: 10px; font-weight: 700; color: var(--accent);
+  position:absolute; bottom:6px; left:6px; background:rgba(0,0,0,.72);
+  border-radius:8px; padding:3px 7px; font-size:10px; font-weight:700; color:var(--accent);
+  z-index:2;
 }
-.p-body { padding: 10px; }
-.p-name { font-size: 12px; font-weight: 700; line-height: 1.3; margin-bottom: 5px; }
-.p-price { font-family: 'Oswald', sans-serif; font-size: 14px; color: var(--accent); }
-.p-btn {
-  margin-top: 8px; width: 100%; border: none; border-radius: 10px;
-  padding: 8px 4px; font-family: 'Nunito', sans-serif; font-weight: 800;
-  font-size: 12px; cursor: pointer; transition: all .15s;
-}
-.p-btn-choose { background: var(--accent); color: #1a1f23; }
-.p-btn-incart { background: rgba(61,186,111,.15); color: var(--green); border: 1px solid rgba(61,186,111,.4); }
-.p-btn:active { transform: scale(.95); }
-.p-qty-ctrl {
-  margin-top: 8px; display: flex; align-items: center; justify-content: space-between; gap: 4px;
-}
-.q-btn {
-  background: var(--card2); border: 1px solid var(--border); border-radius: 8px;
-  width: 28px; height: 28px; font-size: 16px; color: var(--text);
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-}
-.q-num { font-weight: 800; font-size: 14px; }
+.p-body   { padding:10px; }
+.p-name   { font-size:12px; font-weight:700; line-height:1.3; margin-bottom:5px; }
+.p-price  { font-family:'Oswald',sans-serif; font-size:14px; color:var(--accent); }
+.p-btn    { margin-top:8px; width:100%; border:none; border-radius:10px; padding:8px 4px; font-family:'Nunito',sans-serif; font-weight:800; font-size:12px; cursor:pointer; transition:all .15s; }
+.p-btn-choose { background:var(--accent); color:#1a1f23; }
+.p-btn:active { transform:scale(.95); }
+.p-qty-ctrl   { margin-top:8px; display:flex; align-items:center; justify-content:space-between; gap:4px; }
+.q-btn { background:var(--card2); border:1px solid var(--border); border-radius:8px; width:28px; height:28px; font-size:16px; color:var(--text); cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.q-num { font-weight:800; font-size:14px; }
 
-/* ── PRODUCT MODAL ── */
-.overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,.75); z-index: 200;
-  backdrop-filter: blur(4px); align-items: flex-end;
-}
-.overlay.show { display: flex; }
-.sheet {
-  background: var(--card); border-radius: 22px 22px 0 0;
-  width: 100%; max-height: 92vh; overflow-y: auto;
-  padding: 0 0 30px; animation: up .3s ease;
-}
-@keyframes up { from { transform: translateY(100%); } to { transform: translateY(0); } }
-.sheet-handle { width: 38px; height: 4px; background: var(--border); border-radius: 2px; margin: 14px auto 0; }
+/* ════ МОДАЛЬНЕ ВІКНО ТОВАРУ ════ */
+.overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.78); z-index:300; backdrop-filter:blur(4px); align-items:flex-end; }
+.overlay.show { display:flex; }
+.sheet  { background:var(--card); border-radius:22px 22px 0 0; width:100%; max-height:92vh; overflow-y:auto; padding:0 0 30px; animation:up .3s ease; }
+@keyframes up { from{transform:translateY(100%)} to{transform:translateY(0)} }
+.sheet-handle { width:38px; height:4px; background:var(--border); border-radius:2px; margin:14px auto 0; }
+.sheet-pad    { padding:16px 16px 0; }
 
-.prod-img-wrap {
-  width: 100%; aspect-ratio: 1.4; background: var(--card2);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 80px; position: relative; overflow: hidden;
-}
-.prod-img-wrap img {
-  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-}
-.prod-details { padding: 16px 16px 0; }
-.prod-name { font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 700; }
-.prod-desc { font-size: 13px; color: var(--muted); line-height: 1.5; margin-top: 6px; }
+.prod-img-wrap { width:100%; aspect-ratio:1.4; background:var(--card2); display:flex; align-items:center; justify-content:center; font-size:80px; position:relative; overflow:hidden; }
+.prod-img-wrap img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.prod-details { padding:16px 16px 0; }
+.prod-name    { font-family:'Oswald',sans-serif; font-size:22px; font-weight:700; }
+.prod-desc    { font-size:13px; color:var(--muted); line-height:1.5; margin-top:6px; }
 
-.variant-section { padding: 14px 16px 0; }
-.variant-label {
-  font-size: 11px; font-weight: 800; text-transform: uppercase;
-  letter-spacing: .7px; color: var(--muted); margin-bottom: 8px;
-}
-.variant-chips { display: flex; flex-wrap: wrap; gap: 7px; }
-.v-chip {
-  background: var(--card2); border: 1.5px solid var(--border);
-  border-radius: 10px; padding: 7px 12px;
-  font-size: 13px; font-weight: 600; cursor: pointer; transition: all .15s;
-}
-.v-chip.sel { background: rgba(245,166,35,.15); border-color: var(--accent); color: var(--accent); }
-.v-chip:active { transform: scale(.94); }
+.variant-section { padding:14px 16px 0; }
+.variant-label   { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.7px; color:var(--muted); margin-bottom:8px; }
+.variant-chips   { display:flex; flex-wrap:wrap; gap:7px; }
+.v-chip { background:var(--card2); border:1.5px solid var(--border); border-radius:10px; padding:7px 12px; font-size:13px; font-weight:600; cursor:pointer; transition:all .15s; }
+.v-chip.sel { background:rgba(245,166,35,.15); border-color:var(--accent); color:var(--accent); }
+.v-chip:active { transform:scale(.94); }
 
-.price-row {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 16px 0;
-}
-.price-big { font-family: 'Oswald', sans-serif; font-size: 26px; color: var(--accent); }
-.price-note { font-size: 11px; color: var(--muted); }
+.price-row  { display:flex; align-items:center; justify-content:space-between; padding:16px 16px 0; }
+.price-big  { font-family:'Oswald',sans-serif; font-size:26px; color:var(--accent); }
+.price-note { font-size:11px; color:var(--muted); }
+.add-row    { padding:14px 16px 0; display:flex; align-items:center; gap:10px; }
+.qty-ctrl-modal { display:flex; align-items:center; gap:10px; }
+.qm-btn { background:var(--card2); border:1px solid var(--border); border-radius:10px; width:36px; height:36px; font-size:18px; color:var(--text); cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.qm-num { font-weight:800; font-size:16px; min-width:22px; text-align:center; }
+.add-btn { flex:1; background:linear-gradient(135deg,var(--accent),#e8831a); border:none; border-radius:12px; padding:13px; font-family:'Oswald',sans-serif; font-size:16px; font-weight:700; color:#1a1f23; letter-spacing:.5px; cursor:pointer; transition:opacity .2s; }
+.add-btn:active  { opacity:.85; }
+.add-btn:disabled{ opacity:.35; cursor:default; }
+.variant-warn    { font-size:12px; color:var(--accent2); padding:8px 16px 0; display:none; }
 
-.add-row { padding: 14px 16px 0; display: flex; align-items: center; gap: 10px; }
-.qty-ctrl-modal { display: flex; align-items: center; gap: 10px; }
-.qm-btn {
-  background: var(--card2); border: 1px solid var(--border);
-  border-radius: 10px; width: 36px; height: 36px; font-size: 18px;
-  color: var(--text); cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-}
-.qm-num { font-weight: 800; font-size: 16px; min-width: 22px; text-align: center; }
-.add-btn {
-  flex: 1; background: linear-gradient(135deg, var(--accent), #e8831a);
-  border: none; border-radius: 12px; padding: 13px;
-  font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 700;
-  color: #1a1f23; letter-spacing: .5px; cursor: pointer; transition: opacity .2s;
-}
-.add-btn:active { opacity: .85; }
-.add-btn:disabled { opacity: .35; cursor: default; }
-.variant-warn {
-  font-size: 12px; color: var(--accent2); padding: 8px 16px 0;
-  display: none;
-}
+/* ════ КОШИК ════ */
+.cart-item   { display:flex; align-items:flex-start; gap:10px; padding:12px 0; border-bottom:1px solid var(--border); }
+.ci-icon     { font-size:26px; width:38px; text-align:center; flex-shrink:0; padding-top:2px; }
+.ci-info     { flex:1; }
+.ci-name     { font-size:13px; font-weight:700; line-height:1.3; }
+.ci-variant  { font-size:11px; color:var(--muted); margin-top:2px; }
+.ci-price    { font-family:'Oswald',sans-serif; font-size:14px; color:var(--accent); margin-top:4px; }
+.ci-ctrl     { display:flex; align-items:center; gap:7px; flex-shrink:0; }
+.ci-btn      { background:var(--card2); border:1px solid var(--border); border-radius:8px; width:28px; height:28px; font-size:15px; color:var(--text); cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.ci-qty      { font-weight:800; font-size:14px; min-width:18px; text-align:center; }
+.cart-empty  { text-align:center; color:var(--muted); padding:40px 0; }
+.cart-total-row { display:flex; justify-content:space-between; align-items:center; padding:14px 0 6px; font-weight:700; }
+.cart-sum    { font-family:'Oswald',sans-serif; font-size:24px; color:var(--accent); }
+.checkout-btn { width:100%; background:linear-gradient(135deg,var(--accent),var(--accent2)); border:none; border-radius:14px; padding:15px; font-family:'Oswald',sans-serif; font-size:18px; font-weight:700; color:white; letter-spacing:1px; cursor:pointer; transition:opacity .2s; }
+.checkout-btn:active  { opacity:.85; }
+.checkout-btn:disabled{ opacity:.35; cursor:default; }
+.min-note    { font-size:11px; color:var(--muted); text-align:center; margin-top:8px; }
 
-/* ── CART SHEET ── */
-.cart-item {
-  display: flex; align-items: flex-start; gap: 10px;
-  padding: 12px 0; border-bottom: 1px solid var(--border);
-}
-.ci-icon { font-size: 26px; width: 38px; text-align: center; flex-shrink: 0; padding-top: 2px; }
-.ci-info { flex: 1; }
-.ci-name { font-size: 13px; font-weight: 700; line-height: 1.3; }
-.ci-variant { font-size: 11px; color: var(--muted); margin-top: 2px; }
-.ci-price { font-family: 'Oswald', sans-serif; font-size: 14px; color: var(--accent); margin-top: 4px; }
-.ci-ctrl { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
-.ci-btn {
-  background: var(--card2); border: 1px solid var(--border);
-  border-radius: 8px; width: 28px; height: 28px; font-size: 15px;
-  color: var(--text); cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-}
-.ci-qty { font-weight: 800; font-size: 14px; min-width: 18px; text-align: center; }
-.cart-empty { text-align: center; color: var(--muted); padding: 40px 0; }
-.cart-total-row {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 14px 0 6px; font-weight: 700;
-}
-.cart-sum { font-family: 'Oswald', sans-serif; font-size: 24px; color: var(--accent); }
-.checkout-btn {
-  width: 100%; background: linear-gradient(135deg, var(--accent), var(--accent2));
-  border: none; border-radius: 14px; padding: 15px;
-  font-family: 'Oswald', sans-serif; font-size: 18px; font-weight: 700;
-  color: white; letter-spacing: 1px; cursor: pointer; transition: opacity .2s;
-}
-.checkout-btn:active { opacity: .85; }
-.checkout-btn:disabled { opacity: .35; cursor: default; }
-.min-note { font-size: 11px; color: var(--muted); text-align: center; margin-top: 8px; }
+/* ════ ФОРМА ЗАМОВЛЕННЯ ════ */
+.form-group  { margin-bottom:14px; }
+.form-label  { display:block; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); margin-bottom:6px; }
+.form-input  { width:100%; background:var(--dark); border:1px solid var(--border); border-radius:12px; padding:12px 14px; color:var(--text); font-family:'Nunito',sans-serif; font-size:15px; outline:none; transition:border-color .2s; }
+.form-input:focus       { border-color:var(--accent); }
+.form-input::placeholder{ color:var(--muted); }
 
-/* ── FORM ── */
-.form-group { margin-bottom: 14px; }
-.form-label {
-  display: block; font-size: 11px; font-weight: 800; text-transform: uppercase;
-  letter-spacing: .5px; color: var(--muted); margin-bottom: 6px;
-}
-.form-input {
-  width: 100%; background: var(--dark); border: 1px solid var(--border);
-  border-radius: 12px; padding: 12px 14px; color: var(--text);
-  font-family: 'Nunito', sans-serif; font-size: 15px; outline: none;
-  transition: border-color .2s;
-}
-.form-input:focus { border-color: var(--accent); }
-.form-input::placeholder { color: var(--muted); }
+/* ════ УСПІШНЕ ЗАМОВЛЕННЯ ════ */
+.success-screen { display:none; position:fixed; inset:0; background:var(--dark); z-index:500; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:32px; }
+.success-screen.show { display:flex; }
+.s-icon  { font-size:80px; margin-bottom:20px; }
+.s-title { font-family:'Oswald',sans-serif; font-size:28px; color:var(--accent); margin-bottom:10px; }
+.s-text  { color:var(--muted); font-size:14px; line-height:1.7; }
+.s-back  { margin-top:30px; background:var(--accent); border:none; border-radius:14px; padding:14px 32px; font-family:'Oswald',sans-serif; font-size:16px; font-weight:700; color:#1a1f23; cursor:pointer; letter-spacing:.5px; }
 
-/* ── SUCCESS ── */
-.success-screen {
-  display: none; position: fixed; inset: 0; background: var(--dark); z-index: 500;
-  flex-direction: column; align-items: center; justify-content: center;
-  text-align: center; padding: 32px;
-}
-.success-screen.show { display: flex; }
-.s-icon { font-size: 80px; margin-bottom: 20px; }
-.s-title { font-family: 'Oswald', sans-serif; font-size: 28px; color: var(--accent); margin-bottom: 10px; }
-.s-text { color: var(--muted); font-size: 14px; line-height: 1.7; }
-.s-back {
-  margin-top: 30px; background: var(--accent); border: none; border-radius: 14px;
-  padding: 14px 32px; font-family: 'Oswald', sans-serif; font-size: 16px;
-  font-weight: 700; color: #1a1f23; cursor: pointer; letter-spacing: .5px;
-}
+/* ════ СТОРІНКА «ПРО НАС» ════ */
+.about-hero         { width:100%; aspect-ratio:1.2; background:var(--card2); overflow:hidden; position:relative; }
+.about-hero img     { width:100%; height:100%; object-fit:cover; }
+.about-hero-overlay { position:absolute; inset:0; background:linear-gradient(to top,rgba(24,28,32,.95) 0%,transparent 55%); display:flex; align-items:flex-end; padding:20px; }
+.about-hero-title   { font-family:'Oswald',sans-serif; font-size:26px; font-weight:700; letter-spacing:1px; }
+.about-body         { padding:16px; }
+.about-badge        { display:inline-flex; align-items:center; gap:6px; background:rgba(245,166,35,.12); border:1px solid rgba(245,166,35,.3); border-radius:20px; padding:6px 14px; font-size:12px; font-weight:700; color:var(--accent); margin-bottom:14px; }
+.about-text         { font-size:14px; line-height:1.7; color:#c8c3bb; }
+.about-text p       { margin-bottom:12px; }
+.about-section-title{ font-family:'Oswald',sans-serif; font-size:16px; color:var(--accent); margin:20px 0 10px; letter-spacing:.5px; }
+.about-cards        { display:flex; flex-direction:column; gap:10px; margin-bottom:16px; }
+.about-card         { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; display:flex; align-items:flex-start; gap:12px; }
+.about-card-icon    { font-size:26px; flex-shrink:0; }
+.about-card-title   { font-weight:800; font-size:14px; margin-bottom:4px; }
+.about-card-text    { font-size:12px; color:var(--muted); line-height:1.5; }
 
-/* ── BOTTOM BAR ── */
-.bottom-bar {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  background: var(--card); border-top: 1px solid var(--border);
-  padding: 10px 14px 18px; display: none; z-index: 50;
+/* ════ КНОПКА ЧАТБОТУ ════ */
+.bot-cta {
+  display:flex; align-items:center; gap:12px;
+  background:linear-gradient(135deg,#1a2744,#1e3a5f);
+  border:1px solid rgba(100,160,255,.25); border-radius:14px;
+  padding:14px; margin-bottom:14px; cursor:pointer; text-decoration:none;
+  transition:opacity .2s;
 }
-.bottom-bar.vis { display: block; }
-.bot-btn {
-  width: 100%; background: linear-gradient(135deg, var(--accent), var(--accent2));
-  border: none; border-radius: 14px; padding: 14px 16px;
-  font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 700;
-  color: white; letter-spacing: .5px; cursor: pointer;
-  display: flex; align-items: center; justify-content: space-between;
-  transition: opacity .2s;
-}
-.bot-btn:active { opacity: .85; }
+.bot-cta:active { opacity:.85; }
+.bot-cta-icon   { font-size:30px; flex-shrink:0; }
+.bot-cta-title  { font-weight:800; font-size:14px; color:#a0c4ff; }
+.bot-cta-sub    { font-size:12px; color:var(--muted); margin-top:2px; }
+.bot-cta-arrow  { margin-left:auto; font-size:20px; color:#a0c4ff; flex-shrink:0; }
 
-/* shared sheet padding */
-.sheet-pad { padding: 16px 16px 0; }
+/* ════ СТОРІНКА «УМОВИ» ════ */
+.terms-body  { padding:16px; }
+.terms-title { font-family:'Oswald',sans-serif; font-size:22px; margin-bottom:16px; display:flex; gap:10px; align-items:center; }
+.terms-block { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; margin-bottom:12px; }
+.terms-block-head { font-weight:800; font-size:14px; margin-bottom:8px; }
+.terms-block-text { font-size:13px; color:#b0aba3; line-height:1.65; }
+.terms-highlight  { background:rgba(245,166,35,.08); border:1px solid rgba(245,166,35,.2); border-radius:14px; padding:14px; margin-bottom:12px; font-size:13px; color:#c8c3bb; line-height:1.65; }
+.terms-highlight p{ margin-bottom:8px; }
+.terms-highlight p:last-child { margin-bottom:0; }
+.terms-green { background:rgba(61,186,111,.08); border:1px solid rgba(61,186,111,.2); border-radius:14px; padding:14px; margin-bottom:12px; font-size:13px; color:#a8d8b8; line-height:1.65; }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
+<!-- ══════════════════════════════════════
+     HEADER
+══════════════════════════════════════ -->
 <header class="header">
   <div class="logo">
-    <div class="logo-badge">🍺</div>
+
+    <!-- ╔══════════════════════════════════════════╗
+         ║  👉 ЗАМІНИТИ ЛОГО                        ║
+         ║  Завантажте ваше лого в папку проєкту    ║
+         ║  і замініть src нижче на шлях до файлу  ║
+         ║  Приклад: src="images/logo.png"          ║
+         ╚══════════════════════════════════════════╝ -->
+    <img
+      class="logo-img"
+      src="images/logo.png"
+      alt="Snack Zone"
+      onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='flex';"
+    >
+    <!-- Запасний варіант якщо лого не завантажилось -->
+    <div class="logo-fallback" id="logoFallback">🍺</div>
+
     <div>
       <div class="logo-name">SNACK ZONE</div>
       <div class="logo-tag">Снеки та закуски до пива</div>
     </div>
   </div>
-  <button class="cart-fab" onclick="openCart()">
+  <button class="cart-fab" onclick="openCartSheet()">
     🛒<span class="cart-badge" id="cartBadge"></span>
   </button>
 </header>
 
-<!-- BANNER -->
-<div class="banner">
-  <div class="banner-icon">🎯</div>
-  <div>
-    <h3>Мін. замовлення від 1 000 ₴</h3>
-    <p>Гуртові ціни від 3 000 ₴ · Доставка по всій Україні</p>
+
+<!-- ══════════════════════════════════════
+     СТОРІНКА: МАГАЗИН
+══════════════════════════════════════ -->
+<div class="page active" id="page-shop">
+  <div class="banner">
+    <div class="banner-icon">🎯</div>
+    <div>
+      <h3>Мін. замовлення від 1 000 ₴</h3>
+      <p>Гуртові ціни від 3 000 ₴ · Доставка по всій Україні</p>
+    </div>
+  </div>
+  <div class="search-row">
+    <input class="search-input" id="searchInput" type="text" placeholder="🔍  Пошук снеків..." oninput="applyFilters()">
+  </div>
+  <div class="cats">
+    <div>
+      <button class="cat-all active" id="cat-all" onclick="filterCat('all',this)">🍺 Всі товари</button>
+    </div>
+    <div class="cats-row">
+      <button class="cat" onclick="filterCat('ryba',this)">🐟 Риба</button>
+      <button class="cat" onclick="filterCat('ptytsia',this)">🍗 Птиця</button>
+      <button class="cat" onclick="filterCat('myaso',this)">🥩 М'ясо</button>
+    </div>
+    <div class="cats-row">
+      <button class="cat" onclick="filterCat('syr',this)">🧀 Сулугуні</button>
+      <button class="cat" onclick="filterCat('grinky',this)">🍞 Грінки</button>
+      <button class="cat" onclick="filterCat('orehy',this)">🥜 Горіхи</button>
+    </div>
+  </div>
+  <div class="sec-title" id="secTitle">Весь асортимент</div>
+  <div class="grid" id="grid"></div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     СТОРІНКА: ПРО НАС
+══════════════════════════════════════ -->
+<div class="page" id="page-about">
+  <div class="about-hero">
+    <img src="https://snackzone.com.ua/wp-content/uploads/2024/08/about-us.jpg" alt="Про нас">
+    <div class="about-hero-overlay">
+      <div class="about-hero-title">Про нас</div>
+    </div>
+  </div>
+  <div class="about-body">
+
+    <!-- Кнопка Чатбот -->
+    <a class="bot-cta" href="https://t.me/sneky_ta_zakusky_bot" target="_blank">
+      <div class="bot-cta-icon">🤖</div>
+      <div>
+        <div class="bot-cta-title">Telegram Чатбот</div>
+        <div class="bot-cta-sub">Відео товарів, питання, замовлення — все в одному місці</div>
+      </div>
+      <div class="bot-cta-arrow">→</div>
+    </a>
+
+    <div class="about-badge">🏭 Офіційний дистриб'ютор МУРАШЕЧКА</div>
+    <div class="about-text">
+      <p>Ласкаво просимо в інтернет-магазин снеків <strong>Snack Zone</strong>! Ми — офіційний дистриб'ютор виробника "МУРАШЕЧКА", виробничі потужності якого розташовані у м. Нікополь.</p>
+      <p>Ми є вашим головним партнером у світі смачних снеків, які ідеально підходять для будь-якого столу чи смаку пива. Великий асортимент натуральних продуктів високої якості задовольнить найвибагливіші смакові запити.</p>
+    </div>
+
+    <div class="about-section-title">Наша продукція</div>
+    <div class="about-cards">
+      <div class="about-card"><div class="about-card-icon">🐟</div><div><div class="about-card-title">Рибні снеки</div><div class="about-card-text">Свіжі та смачні слайси з риби. В'ялені та копчені делікатеси.</div></div></div>
+      <div class="about-card"><div class="about-card-icon">🥩</div><div><div class="about-card-title">М'ясні снеки та делікатеси</div><div class="about-card-text">Великий вибір сиров'ялених та сушених м'ясних продуктів. Ідеально до будь-якого сорту пива.</div></div></div>
+      <div class="about-card"><div class="about-card-icon">🧀</div><div><div class="about-card-title">Сир Сулугуні</div><div class="about-card-text">Традиційний грузинський сир з натурального молока. Білий або холодного копчення.</div></div></div>
+      <div class="about-card"><div class="about-card-icon">🍞</div><div><div class="about-card-title">Грінки та Сухарики</div><div class="about-card-text">Хрусткі шматочки хліба з широким вибором смаків. Ідеально до напоїв або у салати.</div></div></div>
+    </div>
+
+    <div class="about-section-title">Чому обирають нас?</div>
+    <div class="about-cards">
+      <div class="about-card"><div class="about-card-icon">🌿</div><div><div class="about-card-title">Натуральні інгредієнти</div><div class="about-card-text">Кожен продукт виготовлений з найкращих натуральних складників без зайвих домішок.</div></div></div>
+      <div class="about-card"><div class="about-card-icon">🛡️</div><div><div class="about-card-title">Контроль якості</div><div class="about-card-text">На складі працюють фахівці з перевірки якості перед відправкою: терміни, запах, упаковка.</div></div></div>
+      <div class="about-card"><div class="about-card-icon">🤝</div><div><div class="about-card-title">Надійне партнерство</div><div class="about-card-text">Довгострокові відносини з кожним клієнтом. Відкритість та зобов'язання до якості.</div></div></div>
+      <div class="about-card"><div class="about-card-icon">📦</div><div><div class="about-card-title">Дегустаційні зразки</div><div class="about-card-text">Надаємо дегустаційні зразки для продажу в торговій мережі. Зв'яжіться з нами.</div></div></div>
+    </div>
+
+    <a href="https://snackzone.com.ua/contacts/" target="_blank"
+       style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;color:var(--text);text-decoration:none;font-weight:800;font-size:14px;">
+      📞 Зв'язатися з нами →
+    </a>
   </div>
 </div>
 
-<!-- SEARCH -->
-<div class="search-row">
-  <input class="search-input" id="searchInput" type="text" placeholder="🔍  Пошук снеків..." oninput="applyFilters()">
+
+<!-- ══════════════════════════════════════
+     СТОРІНКА: УМОВИ СПІВПРАЦІ
+══════════════════════════════════════ -->
+<div class="page" id="page-terms">
+  <div class="terms-body">
+    <div class="terms-title">🤝 <span>Умови співпраці</span></div>
+
+    <div class="terms-block">
+      <div class="terms-block-head">📌 Порядок роботи</div>
+      <div class="terms-block-text">Ви робите замовлення на сайті або через Telegram. Наш склад опрацьовує наявність товарів, після чого менеджер надасть Вам Рахунок-фактуру та реквізити, де буде вказано точну наявність, ціни, загальну вартість та банківські реквізити.</div>
+    </div>
+
+    <div class="terms-block">
+      <div class="terms-block-head">💳 Умови оплати</div>
+      <div class="terms-block-text">100% попередня оплата на IBAN рахунок Виробника.<br><br>Після оплати просимо надати Квитанцію.</div>
+    </div>
+
+    <div class="terms-block">
+      <div class="terms-block-head">📦 Умови доставки</div>
+      <div class="terms-block-text">Товар відправляється Новою Поштою після оплати за рахунок Отримувача.</div>
+    </div>
+
+    <div class="terms-block">
+      <div class="terms-block-head">🔁 Повернення товару</div>
+      <div class="terms-block-text">
+        Повернути товар Ви можете виключно під час отримання на складі Нової Пошти. В усіх інших випадках процедура повернення неможлива.<br><br>
+        Перелік причин повернення: неприємний запах, розгерметизація упаковки, закінчення терміну придатності.
+      </div>
+    </div>
+
+    <div class="terms-green">
+      🛡️ На нашому складі готової продукції працюють фахівці з перевірки якості товару перед його відправкою Клієнтові. Перевірка стосується термінів придатності, відсутності сторонніх запахів, розгерметизації упаковки тощо.
+    </div>
+
+    <div class="terms-highlight">
+      <p>🤝 Довгострокова плідна співпраця — наш найголовніший пріоритет.</p>
+      <p>Ми твердо впевнені у своїй продукції та турбуємося про свою репутацію та про те, щоб Ви завжди отримували свіжий та якісний товар за найвигіднішими цінами. 💚</p>
+      <p>Ми завжди йдемо назустріч нашим клієнтам задля продовження взаємовигідної плідної довгострокової співпраці.</p>
+      <p><strong>Дякуємо! 🙏</strong></p>
+    </div>
+
+    <!-- Кнопка Чатбот -->
+    <a class="bot-cta" href="https://t.me/sneky_ta_zakusky_bot" target="_blank">
+      <div class="bot-cta-icon">🤖</div>
+      <div>
+        <div class="bot-cta-title">Є питання? Пишіть у Telegram</div>
+        <div class="bot-cta-sub">@sneky_ta_zakusky_bot — відповімо швидко</div>
+      </div>
+      <div class="bot-cta-arrow">→</div>
+    </a>
+  </div>
 </div>
 
-<!-- CATEGORIES -->
-<div class="cats">
-  <button class="cat active" onclick="filterCat('all',this)">Всі</button>
-  <button class="cat" onclick="filterCat('ryba',this)">🐟 Риба</button>
-  <button class="cat" onclick="filterCat('ptytsia',this)">🍗 Птиця</button>
-  <button class="cat" onclick="filterCat('myaso',this)">🥩 М'ясо</button>
-  <button class="cat" onclick="filterCat('syr',this)">🧀 Сулугуні</button>
-  <button class="cat" onclick="filterCat('grinky',this)">🍞 Грінки</button>
-  <button class="cat" onclick="filterCat('orehy',this)">🥜 Горіхи</button>
-</div>
 
-<div class="sec-title" id="secTitle">Весь асортимент</div>
-<div class="grid" id="grid"></div>
-
-<!-- BOTTOM BAR -->
-<div class="bottom-bar" id="bottomBar">
-  <button class="bot-btn" onclick="openCart()">
-    <span>🛒 Кошик</span>
-    <span id="botTotal">0 ₴</span>
+<!-- ══════════════════════════════════════
+     НИЖНЯ НАВІГАЦІЯ
+══════════════════════════════════════ -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" id="nav-shop" onclick="showPage('shop')">
+    <span class="nicon">🛍️</span>Магазин
   </button>
-</div>
+  <button class="nav-btn cart-nav" id="nav-cart" onclick="openCartSheet()">
+    <span class="nicon">🛒</span>Кошик
+    <span class="nav-cart-badge" id="navCartBadge"></span>
+  </button>
+  <a class="nav-btn" href="https://t.me/sneky_ta_zakusky_bot" target="_blank" style="text-decoration:none;">
+    <span class="nicon">🤖</span>Чатбот
+  </a>
+  <button class="nav-btn" id="nav-terms" onclick="showPage('terms')">
+    <span class="nicon">🤝</span>Умови
+  </button>
+  <button class="nav-btn" id="nav-about" onclick="showPage('about')">
+    <span class="nicon">ℹ️</span>Про нас
+  </button>
+</nav>
 
-<!-- PRODUCT DETAIL SHEET -->
+
+<!-- ══════════════════════════════════════
+     МОДАЛЬНЕ ВІКНО: ДЕТАЛІ ТОВАРУ
+══════════════════════════════════════ -->
 <div class="overlay" id="prodOverlay" onclick="closeProd(event)">
   <div class="sheet" id="prodSheet">
     <div class="sheet-handle"></div>
-    <div class="prod-img-wrap" id="prodImg"><span id="prodEmoji"></span><img id="prodImgEl" src="" alt="" onerror="this.style.display='none'"></div>
+    <div class="prod-img-wrap">
+      <span id="prodEmoji" style="position:relative;z-index:1"></span>
+      <img id="prodImgEl" src="" alt="" onerror="this.style.display='none'">
+    </div>
     <div class="prod-details">
       <div class="prod-name" id="prodName"></div>
       <div class="prod-desc" id="prodDesc"></div>
     </div>
-
-    <!-- Flavor variants -->
     <div class="variant-section" id="flavorSection" style="display:none">
       <div class="variant-label" id="flavorLabel">Смак</div>
       <div class="variant-chips" id="flavorChips"></div>
     </div>
-
-    <!-- Weight variants -->
     <div class="variant-section" id="weightSection" style="display:none">
       <div class="variant-label">Вага / фасування</div>
       <div class="variant-chips" id="weightChips"></div>
     </div>
-
     <div class="variant-warn" id="variantWarn">⚠️ Оберіть усі варіанти перед додаванням</div>
-
     <div class="price-row">
       <div>
         <div class="price-big" id="prodPrice">—</div>
@@ -385,7 +507,7 @@ body { background: var(--dark); color: var(--text); font-family: 'Nunito', sans-
     <div class="add-row">
       <div class="qty-ctrl-modal">
         <button class="qm-btn" onclick="changeModalQty(-1)">−</button>
-        <span class="qm-num" id="modalQty">1</span>
+        <span class="qm-num" id="modalQtyEl">1</span>
         <button class="qm-btn" onclick="changeModalQty(1)">+</button>
       </div>
       <button class="add-btn" id="addBtn" onclick="addToCartFromModal()">ДОДАТИ В КОШИК</button>
@@ -393,8 +515,11 @@ body { background: var(--dark); color: var(--text); font-family: 'Nunito', sans-
   </div>
 </div>
 
-<!-- CART SHEET -->
-<div class="overlay" id="cartOverlay" onclick="closeCart(event)">
+
+<!-- ══════════════════════════════════════
+     МОДАЛЬНЕ ВІКНО: КОШИК
+══════════════════════════════════════ -->
+<div class="overlay" id="cartOverlay" onclick="closeCartSheet(event)">
   <div class="sheet">
     <div class="sheet-handle"></div>
     <div class="sheet-pad">
@@ -410,7 +535,10 @@ body { background: var(--dark); color: var(--text); font-family: 'Nunito', sans-
   </div>
 </div>
 
-<!-- ORDER FORM SHEET -->
+
+<!-- ══════════════════════════════════════
+     МОДАЛЬНЕ ВІКНО: ФОРМА ЗАМОВЛЕННЯ
+══════════════════════════════════════ -->
 <div class="overlay" id="formOverlay" onclick="closeForm(event)">
   <div class="sheet">
     <div class="sheet-handle"></div>
@@ -438,298 +566,308 @@ body { background: var(--dark); color: var(--text); font-family: 'Nunito', sans-
   </div>
 </div>
 
-<!-- SUCCESS -->
+
+<!-- ══════════════════════════════════════
+     ЕКРАН УСПІШНОГО ЗАМОВЛЕННЯ
+══════════════════════════════════════ -->
 <div class="success-screen" id="success">
   <div class="s-icon">🎉</div>
-  <div class="s-title">Замовлення відправлено!</div>
-  <div class="s-text">Дякуємо! Перевіримо наявність товарів<br>і незабаром зв'яжемось з вами<br>для підтвердження та виставлення рахунку.</div>
-  <button class="s-back" onclick="document.getElementById('success').classList.remove('show')">← ПОВЕРНУТИСЬ ДО МАГАЗИНУ</button>
+  <div class="s-title">Замовлення прийнято!</div>
+  <div class="s-text">
+    Дякуємо за замовлення!<br><br>
+    📋 Наш склад опрацює наявність товарів<br>
+    та менеджер надішле вам<br>
+    <strong style="color:var(--accent)">Рахунок-фактуру з реквізитами</strong><br>
+    для оплати.<br><br>
+    ⏱ Зазвичай це займає до 24 годин<br>
+    у робочі дні.<br><br>
+    💬 З питань звертайтесь у чатбот:<br>
+    <a href="https://t.me/sneky_ta_zakusky_bot" style="color:var(--accent)">@sneky_ta_zakusky_bot</a>
+  </div>
+  <button class="s-back" onclick="document.getElementById('success').classList.remove('show'); showPage('shop')">← ПОВЕРНУТИСЬ ДО МАГАЗИНУ</button>
 </div>
 
+
+<!-- ══════════════════════════════════════
+     ДАНІ ТОВАРІВ
+     
+     👉 ЯК ДОДАТИ ФОТО ТОВАРУ:
+     Кожен товар має поле  img: '...'
+     Замініть значення на URL вашого фото.
+     
+     Варіанти:
+     1. Завантажте фото в папку "images/" поряд з index.html
+        і вкажіть: img: 'images/vuha.jpg'
+     
+     2. Використайте посилання з вашого сайту або 
+        Google Drive (публічне посилання)
+     
+     Якщо img порожній ('') — показується емодзі-заглушка.
+══════════════════════════════════════ -->
 <script>
-// ═══════════════════════════════════════════════
-// PRODUCT DATA  (flavor + weight variants)
-// ═══════════════════════════════════════════════
 const PRODUCTS = [
-  // ── М'ЯСО ──
+
+  // ════════════ М'ЯСО ════════════
   {
-    id: 'vuha', name: 'Вуха Свинячі', emoji: '🐷', cat: 'myaso',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/vuha-svinyachi-1-600x600.jpg',
-    desc: 'Хрусткі свинячі вуха — хіт продажів! Великий вибір смаків. Фасування 100 г або 1 кг.',
-    flavors: ['Аджика','Копчені з Перцем','Копчені Соломкою','Мега Гострі','Пармезан','По-Грецьки','По-Іспанськи','По-Царськи','Томат-Базилік','Холодець з Хріном','Часникові','Чілі'],
-    weights: [{ label: '100 г', price: 40 }, { label: '1 кг', price: 400 }],
+    id:'vuha', name:'Вуха Свинячі', emoji:'🐷', cat:'myaso',
+    img:'images/vuha.jpg',
+    desc:'Хрусткі свинячі вуха — хіт продажів! Великий вибір смаків. Фасування 100 г або 1 кг.',
+    flavors:['Аджика','Копчені з Перцем','Копчені Соломкою','Мега Гострі','Пармезан','По-Грецьки','По-Іспанськи','По-Царськи','Томат-Базилік','Холодець з Хріном','Часникові','Чілі'],
+    weights:[{label:'100 г',price:40},{label:'1 кг',price:400}],
   },
   {
-    id: 'karpachini', name: 'Карпачіні', emoji: '🥩', cat: 'myaso',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/karpachini-1-150x150.jpg',
-    desc: "М'ясні делікатеси у стилі карпаччо. Тонко нарізані, сиров'ялені.",
-    flavors: ['Класичні','По-Іспанськи','Пармезан'],
-    weights: [{ label: '100 г', price: 44 }, { label: '1 кг', price: 460 }],
+    id:'karpachini', name:'Карпачіні', emoji:'🥩', cat:'myaso',
+    img:'images/karpachini.jpg',
+    desc:"М'ясні делікатеси у стилі карпаччо. Тонко нарізані, сиров'ялені.",
+    flavors:['Класичні','По-Іспанськи','Пармезан'],
+    weights:[{label:'100 г',price:44},{label:'1 кг',price:460}],
   },
   {
-    id: 'zakuska', name: "Закуска до Пива (Яловичина / Конина)", emoji: '🥩', cat: 'myaso',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/zakuska-do-piva-1-150x150.jpg',
-    desc: "Сиров'ялені м'ясні снеки. Ідеально до будь-якого сорту пива.",
-    flavors: ['Яловичина','Конина'],
-    weights: [{ label: '100 г', price: 45 }, { label: '1 кг', price: 450 }],
+    id:'zakuska', name:'Закуска до Пива', emoji:'🥩', cat:'myaso',
+    img:'images/zakuska.jpg',
+    desc:"Сиров'ялені м'ясні снеки. Яловичина/Конина. Ідеально до будь-якого сорту пива.",
+    weights:[{label:'100 г',price:45},{label:'1 кг',price:450}],
   },
   {
-    id: 'hamon', name: 'Хамон', emoji: '🥩', cat: 'myaso',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/hamon-1-150x150.jpg',
-    desc: 'Іспанський хамон власного виробництва. Тонка нарізка, насичений смак.',
-    flavors: ['Класичний','По-Іспанськи','З Перцем'],
-    weights: [{ label: '100 г', price: 44 }, { label: '1 кг', price: 440 }],
+    id:'hamon', name:'Хамон', emoji:'🥩', cat:'myaso',
+    img:'images/hamon.jpg',
+    desc:'Хамон власного виробництва. Тонка нарізка, насичений смак.',
+    flavors:['Класичний','По-Іспанськи','З Перцем'],
+    weights:[{label:'100 г',price:44},{label:'1 кг',price:440}],
   },
   {
-    id: 'piatachky', name: "П'ятачки Свинячі", emoji: '🐷', cat: 'myaso',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/vuha-svinyachi-1-150x150.jpg',
-    desc: 'Хрусткі свинячі п\'ятачки. Відмінна закуска до пива.',
-    flavors: ['Класичні','Гострі','Часникові','Копчені'],
-    weights: [{ label: '100 г', price: 38 }, { label: '1 кг', price: 380 }],
+    id:'piatachky', name:"П'ятачки Свинячі", emoji:'🐷', cat:'myaso',
+    img:'images/piatachky.jpg',
+    desc:"Хрусткі свинячі п'ятачки. Відмінна закуска до пива.",
+    flavors:['Класичні','Гострі','Часникові','Копчені'],
+    weights:[{label:'100 г',price:38},{label:'1 кг',price:380}],
   },
   {
-    id: 'solomka-svynyna', name: 'Соломка зі Свинини', emoji: '🥩', cat: 'myaso',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/zakuska-do-piva-1-150x150.jpg',
-    desc: 'М\'ясна соломка зі свинини. Зручна упаковка 500 г.',
-    weights: [{ label: '500 г', price: 370 }],
+    id:'solomka-svynyna', name:'Соломка зі Свинини', emoji:'🥩', cat:'myaso',
+    img:'images/solomka-svynyna.jpg',
+    desc:"М'ясна соломка зі свинини. Зручна упаковка.",
+    weights:[{label:'500 г',price:370}],
   },
 
-  // ── ПТИЦЯ ──
+  // ════════════ ПТИЦЯ ════════════
   {
-    id: 'kachka-pekinska', name: 'Качка По-Пекінськи', emoji: '🦆', cat: 'ptytsia',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/kachka-po-pekinski-1-150x150.jpg',
-    desc: 'Качка за класичним пекінським рецептом. Неповторний смак зі Сходу.',
-    weights: [{ label: '100 г', price: 78 }, { label: '1 кг', price: 780 }],
+    id:'kachka-pekinska', name:'Качка По-Пекінськи', emoji:'🦆', cat:'ptytsia',
+    img:'images/kachka-pekinska.jpg',
+    desc:'Качка за класичним пекінським рецептом. Неповторний смак зі Сходу.',
+    weights:[{label:'100 г',price:78},{label:'1 кг',price:780}],
   },
   {
-    id: 'kachka-yabluko', name: 'Качка у яблучному соусі', emoji: '🦆', cat: 'ptytsia',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/kachka-po-pekinski-1-150x150.jpg',
-    desc: 'Качка з ніжним яблучним соусом. Солодко-пікантна комбінація.',
-    weights: [{ label: '100 г', price: 77 }, { label: '1 кг', price: 770 }],
+    id:'kachka-yabluko', name:'Качка у яблучному соусі', emoji:'🦆', cat:'ptytsia',
+    img:'images/kachka-yabluko.jpg',
+    desc:'Качка з ніжним яблучним соусом. Солодко-пікантна комбінація.',
+    weights:[{label:'100 г',price:77},{label:'1 кг',price:770}],
   },
   {
-    id: 'kryltsia', name: 'Крильця Курячі ХК', emoji: '🍗', cat: 'ptytsia',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/dzhoki-kuryachi-sirovyaleni-1-150x150.jpg',
-    desc: 'Курячі крильця холодного копчення з різними соусами.',
-    flavors: ['Класичні','BBQ','Гострі','Медово-Гірчичні'],
-    weights: [{ label: '1 кг', price: 380 }],
+    id:'kuryacha-palichka', name:'Куряча Паличка', emoji:'🍗', cat:'ptytsia',
+    img:'images/kuryacha-palichka.jpg',
+    desc:"Куряча паличка сиров'ялена. Зручний формат для перекусу.",
+    flavors:['Класична','Гостра','Часникова','BBQ'],
+    weights:[{label:'100 г',price:76},{label:'1 кг',price:680}],
   },
   {
-    id: 'kuryacha-palichka', name: 'Куряча Паличка', emoji: '🍗', cat: 'ptytsia',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/kuryacha-palichka-1-150x150.jpg',
-    desc: 'Куряча паличка сиров\'ялена. Зручний формат для перекусу.',
-    flavors: ['Класична','Гостра','Часникова','BBQ'],
-    weights: [{ label: '100 г', price: 76 }, { label: '1 кг', price: 680 }],
+    id:'solomka-krab', name:'Куряча Соломка зі Смаком Краба', emoji:'🦀', cat:'ptytsia',
+    img:'images/solomka-krab.jpg',
+    desc:'Куряча соломка з вишуканим смаком краба. Оригінальна закуска.',
+    weights:[{label:'100 г',price:76},{label:'1 кг',price:680}],
   },
   {
-    id: 'solomka-krab', name: 'Куряча Соломка зі Смаком Краба', emoji: '🦀', cat: 'ptytsia',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/kuryacha-solomka-zi-smakom-kraba-1-150x150.jpg',
-    desc: 'Куряча соломка з вишуканим смаком краба. Оригінальна закуска.',
-    weights: [{ label: '100 г', price: 76 }, { label: '1 кг', price: 680 }],
+    id:'solomka-chili', name:'Куряча Соломка зі Смаком Чілі', emoji:'🌶️', cat:'ptytsia',
+    img:'images/solomka-chili.jpg',
+    desc:'Гостра куряча соломка з пікантним смаком чілі. Для любителів гострого!',
+    weights:[{label:'100 г',price:76},{label:'1 кг',price:680}],
   },
   {
-    id: 'solomka-chili', name: 'Куряча Соломка зі Смаком Чілі', emoji: '🌶️', cat: 'ptytsia',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/kuryacha-solomka-zi-smakom-chili-1-150x150.jpg',
-    desc: 'Гостра куряча соломка з пікантним смаком чілі. Для любителів гострого!',
-    weights: [{ label: '100 г', price: 76 }, { label: '1 кг', price: 680 }],
+    id:'serdechka', name:'Курячі Сердечка ХК', emoji:'🍗', cat:'ptytsia',
+    img:'images/serdechka.jpg',
+    desc:'Курячі сердечка холодного копчення. Ніжний смак, апетитний аромат.',
+    weights:[{label:'100 г',price:142}],
   },
   {
-    id: 'serdechka', name: 'Курячі Сердечка ХК', emoji: '🍗', cat: 'ptytsia',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/dzhoki-kuryachi-sirovyaleni-1-150x150.jpg',
-    desc: 'Курячі сердечка холодного копчення. Ніжний смак, апетитний аромат.',
-    weights: [{ label: '100 г', price: 142 }],
+    id:'indychka', name:"М'ясо Індички", emoji:'🦃', cat:'ptytsia',
+    img:'images/indychka.jpg',
+    desc:"Дієтичне м'ясо індички. Корисно і смачно!",
+    flavors:['Класичне','З Прованськими Травами','Гостре','Копчене'],
+    weights:[{label:'100 г',price:76},{label:'1 кг',price:760}],
   },
   {
-    id: 'indychka', name: "М'ясо Індички", emoji: '🦃', cat: 'ptytsia',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/myaso-indichki-1-150x150.jpg',
-    desc: 'Дієтичне м\'ясо індички. Корисно і смачно!',
-    flavors: ['Класичне','З Прованськими Травами','Гостре','Копчене'],
-    weights: [{ label: '100 г', price: 76 }, { label: '1 кг', price: 760 }],
+    id:'file-gretski', name:'Філе Куряче по-грецьки', emoji:'🍗', cat:'ptytsia',
+    img:'images/file-gretski.jpg',
+    desc:'Куряче філе за грецьким рецептом з ароматними травами та лимоном.',
+    weights:[{label:'100 г',price:73},{label:'1 кг',price:730}],
   },
   {
-    id: 'file-gretski', name: 'Філе Куряче по-грецьки', emoji: '🍗', cat: 'ptytsia',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/File-Kyryache-Po-Grecku-1-150x150.jpg',
-    desc: 'Куряче філе за грецьким рецептом з ароматними травами та лимоном.',
-    weights: [{ label: '100 г', price: 73 }, { label: '1 кг', price: 730 }],
+    id:'perepelyni-yaitsia', name:'Перепелині Яйця ХК (10 шт)', emoji:'🥚', cat:'ptytsia',
+    img:'images/perepelyni-yaitsia.jpg',
+    desc:'Перепелині яйця холодного копчення, 10 штук. Делікатес до пива.',
+    weights:[{label:'10 шт',price:130}],
   },
   {
-    id: 'perepelyni-yaitsia', name: 'Перепелині Яйця ХК (10 шт)', emoji: '🥚', cat: 'ptytsia',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/dzhoki-kuryachi-sirovyaleni-1-150x150.jpg',
-    desc: 'Перепелині яйця холодного копчення, 10 штук. Делікатес до пива.',
-    weights: [{ label: '10 шт', price: 130 }],
+    id:'perepilka', name:'Перепілка ХК', emoji:'🦃', cat:'ptytsia',
+    img:'images/perepilka.jpg',
+    desc:'Ціла перепілка холодного копчення. Ексклюзивна закуска.',
+    weights:[{label:'1 шт',price:440}],
   },
   {
-    id: 'perepilka', name: 'Перепілка ХК', emoji: '🦃', cat: 'ptytsia',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/myaso-indichki-1-150x150.jpg',
-    desc: 'Ціла перепілка холодного копчення. Ексклюзивна закуска.',
-    weights: [{ label: '1 шт', price: 440 }],
+    id:'chypsy-kachka', name:'Чипси з Качки', emoji:'🦆', cat:'ptytsia',
+    img:'images/chypsy-kachka.jpg',
+    desc:"Хрусткі чипси з м'яса качки. Незвичайний смак, що запам'ятовується.",
+    flavors:['По-Пекінськи','У яблучному соусі','Класичні'],
+    weights:[{label:'100 г',price:79},{label:'1 кг',price:790}],
   },
   {
-    id: 'chypsy-kachka', name: 'Чипси з Качки', emoji: '🦆', cat: 'ptytsia',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/kachka-po-pekinski-1-150x150.jpg',
-    desc: 'Хрусткі чипси з м\'яса качки. Незвичайний смак, що запам\'ятовується.',
-    flavors: ['По-Пекінськи','У яблучному соусі','Класичні'],
-    weights: [{ label: '100 г', price: 79 }, { label: '1 кг', price: 790 }],
+    id:'chypsy-kurka', name:'Чипси з Курки', emoji:'🍗', cat:'ptytsia',
+    img:'images/chypsy-kurka.jpg',
+    desc:'Хрусткі курячі чипси. На вибір: з часником, у вишневому соусі або у сирному соусі.',
+    flavors:['З часником','У вишневому соусі з гостринкою','У сирному соусі'],
+    weights:[{label:'100 г',price:77},{label:'1 кг',price:700}],
   },
   {
-    id: 'chypsy-kurka', name: 'Чипси з Курки', emoji: '🍗', cat: 'ptytsia',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/10/chipsi-z-kurki-z-chasnikomi-1-600x600.jpg',
-    desc: 'Хрусткі курячі чипси. На вибір: з часником, у вишневому соусі з гостринкою або у сирному соусі.',
-    flavors: ['З часником','У вишневому соусі з гостринкою','У сирному соусі'],
-    weights: [{ label: '100 г', price: 77 }, { label: '1 кг', price: 700 }],
-  },
-  {
-    id: 'chypsy-indychka', name: 'Чіпси з Індички', emoji: '🦃', cat: 'ptytsia',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/chipsi-z-indichki-1-150x150.jpg',
-    desc: 'Чіпси з дієтичного м\'яса індички. Смачно і відносно корисно!',
-    flavors: ['Класичні','Гострі','З прованськими травами'],
-    weights: [{ label: '100 г', price: 77 }, { label: '1 кг', price: 740 }],
+    id:'chypsy-indychka', name:'Чіпси з Індички', emoji:'🦃', cat:'ptytsia',
+    img:'images/chypsy-indychka.jpg',
+    desc:"Чіпси з дієтичного м'яса індички. Смачно і відносно корисно!",
+    flavors:['Класичні','Гострі','З прованськими травами'],
+    weights:[{label:'100 г',price:77},{label:'1 кг',price:740}],
   },
 
-  // ── РИБА ──
+  // ════════════ РИБА ════════════
   {
-    id: 'makrel', name: 'Макрель', emoji: '🐟', cat: 'ryba',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/makrel-1-150x150.jpg',
-    desc: 'В\'ялена макрель. Соковита, насичена смаком — класика до пива.',
-    flavors: ['Класична','Пряна','З Лимоном'],
-    weights: [{ label: '100 г', price: 74 }, { label: '1 кг', price: 660 }],
+    id:'makrel', name:'Макрель', emoji:'🐟', cat:'ryba',
+    img:'images/makrel.jpg',
+    desc:"В'ялена макрель. Соковита, насичена смаком — класика до пива.",
+    flavors:['Класична','Пряна','З Лимоном'],
+    weights:[{label:'100 г',price:74},{label:'1 кг',price:660}],
   },
   {
-    id: 'midiyi', name: 'Мідії Camanchaca', emoji: '🦪', cat: 'ryba',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/midiyi-1-150x150.jpg',
-    desc: 'Мідії преміум-бренду Camanchaca. Делікатес морепродуктів.',
-    flavors: ['Натуральні','У соусі','Копчені'],
-    weights: [{ label: '100 г', price: 83 }, { label: '1 кг', price: 760 }],
+    id:'midiyi', name:'Мідії Camanchaca', emoji:'🦪', cat:'ryba',
+    img:'images/midiyi.jpg',
+    desc:'Мідії преміум-бренду Camanchaca. Делікатес морепродуктів.',
+    flavors:['Натуральні','У соусі','Копчені'],
+    weights:[{label:'100 г',price:83},{label:'1 кг',price:760}],
   },
   {
-    id: 'okun', name: 'Окунь Червоний', emoji: '🐟', cat: 'ryba',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/file-okunya-1-150x150.jpg',
-    desc: 'В\'ялений червоний окунь. М\'ясистий та ароматний.',
-    flavors: ['Класичний','Пряний'],
-    weights: [{ label: '100 г', price: 70 }, { label: '1 кг', price: 690 }],
+    id:'ikra-plotvy', name:'Ікра Плотви', emoji:'🐟', cat:'ryba',
+    img:'images/ikra-plotvy.jpg',
+    desc:'Пресована ікра плотви. Делікатес для справжніх поціновувачів.',
+    weights:[{label:'1 уп.',price:870}],
   },
   {
-    id: 'spynka-liashcha', name: 'Спинка Ляща', emoji: '🐟', cat: 'ryba',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/ribne-asorti-3-150x150.jpg',
-    desc: 'Спинка ляща в\'ялена. Традиційна рибна закуска до пива.',
-    flavors: ['Класична','Пряна','Солена'],
-    weights: [{ label: '100 г', price: 70 }, { label: '1 кг', price: 690 }],
-  },
-  {
-    id: 'ikra-plotvy', name: 'Ікра Плотви', emoji: '🐟', cat: 'ryba',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/ikra-plotvi-1-150x150.jpg',
-    desc: 'Пресована ікра плотви. Делікатес для справжніх поціновувачів.',
-    weights: [{ label: '1 уп.', price: 870 }],
-  },
-  {
-    id: 'ikryanyk', name: 'Ікряник', emoji: '🐟', cat: 'ryba',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/ikryanik-2-150x150.jpg',
-    desc: 'Ікряник — традиційна рибна закуска з ікрою.',
-    weights: [{ label: '1 уп.', price: 450 }],
+    id:'ikryanyk', name:'Ікряник', emoji:'🐟', cat:'ryba',
+    img:'images/ikryanyk.jpg',
+    desc:'Ікряник — традиційна рибна закуска з ікрою.',
+    weights:[{label:'1 уп.',price:450}],
   },
 
-  // ── СИР СУЛУГУНІ ──
+  // ════════════ СИР СУЛУГУНІ ════════════
   {
-    id: 'suluguni-kosa', name: 'Сир Сулугуні Коса', emoji: '🧀', cat: 'syr',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/Sur-Sylygyni-Kosa-1-150x150.jpg',
-    desc: 'Сулугуні коса з натурального молока. Білий або копчений.',
-    flavors: ['Білий','Копчений'],
-    weights: [{ label: '100 г', price: 37 }, { label: '1 кг', price: 370 }],
+    id:'suluguni-kosa', name:'Сир Сулугуні Коса', emoji:'🧀', cat:'syr',
+    img:'images/suluguni-kosa.jpg',
+    desc:'Сулугуні коса з натурального молока. Білий або копчений.',
+    flavors:['Білий','Копчений'],
+    weights:[{label:'100 г',price:37},{label:'1 кг',price:370}],
   },
   {
-    id: 'suluguni-palichka', name: 'Сир Сулугуні Паличка', emoji: '🧀', cat: 'syr',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/Sur-Sylygyni-Paluchka-1-150x150.jpg',
-    desc: 'Паличка сулугуні — зручний формат. Білий або копчений.',
-    flavors: ['Білий','Копчений','З Перцем'],
-    weights: [{ label: '100 г', price: 42 }, { label: '1 кг', price: 415 }],
+    id:'suluguni-palichka', name:'Сир Сулугуні Паличка', emoji:'🧀', cat:'syr',
+    img:'images/suluguni-palichka.jpg',
+    desc:'Паличка сулугуні — зручний формат. Білий, копчений або з перцем.',
+    flavors:['Білий','Копчений','З Перцем'],
+    weights:[{label:'100 г',price:42},{label:'1 кг',price:415}],
   },
   {
-    id: 'suluguni-kubyky', name: 'Сир Сулугуні Рубаний Шматочками', emoji: '🧀', cat: 'syr',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/Sur-Sylygyni-Rybauy-1-150x150.jpg',
-    desc: 'Сулугуні нарізаний кубиками з різними приправами та смаками.',
-    flavors: ['Класичний','З Часником','З Перцем','Копчений','З Зеленню'],
-    weights: [{ label: '100 г', price: 42 }, { label: '1 кг', price: 415 }],
+    id:'suluguni-kubyky', name:'Сир Сулугуні Рубаний', emoji:'🧀', cat:'syr',
+    img:'images/suluguni-kubyky.jpg',
+    desc:'Сулугуні нарізаний кубиками з різними приправами та смаками.',
+    flavors:['Класичний','З Часником','З Перцем','Копчений','З Зеленню'],
+    weights:[{label:'100 г',price:42},{label:'1 кг',price:415}],
   },
   {
-    id: 'syrna-nytka', name: 'Сирна Нитка (підсушена)', emoji: '🧀', cat: 'syr',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/Sur-Sylygyni-Kosa-1-150x150.jpg',
-    desc: 'Підсушена сирна нитка. Хрустка текстура, насичений смак.',
-    weights: [{ label: '1 уп.', price: 390 }],
+    id:'syrna-nytka', name:'Сирна Нитка (підсушена)', emoji:'🧀', cat:'syr',
+    img:'images/syrna-nytka.jpg',
+    desc:'Підсушена сирна нитка. Хрустка текстура, насичений смак.',
+    weights:[{label:'1 уп.',price:390}],
   },
   {
-    id: 'syrna-pavutynka', name: 'Сирна Павутинка (Соломка)', emoji: '🧀', cat: 'syr',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/Sur-Sylygyni-Paluchka-1-150x150.jpg',
-    desc: 'Сирна соломка-павутинка. Ніжна, тягуча, смачна.',
-    weights: [{ label: '1 уп.', price: 350 }],
-  },
-
-  // ── ГРІНКИ ──
-  {
-    id: 'grinky-baget', name: 'Грінки Багет', emoji: '🍞', cat: 'grinky',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/Grinku-Baget-1-150x150.jpg',
-    desc: 'Хрусткі грінки-багет. Широкий вибір смаків. Фасування ~1 кг.',
-    flavors: ['Бекон','Васабі','Гриби зі Сметаною','Раки з Кропом','Сало-Гірчиця','Сметана-Зелень','Холодець з Хріном','Часник'],
-    weights: [{ label: '~1 кг', price: 220 }],
-  },
-  {
-    id: 'grinky-khvyliasti', name: 'Грінки Хвилясті', emoji: '🍞', cat: 'grinky',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/Grinku-Hvulyasti-1-150x150.jpg',
-    desc: 'Хвилясті грінки хрусткі — різноманіття смаків для кожного.',
-    flavors: ['Бекон','Васабі','Гриби зі Сметаною','Раки з Кропом','Сало-Гірчиця','Сметана-Зелень','Холодець з Хріном','Часник'],
-    weights: [{ label: '~1 кг', price: 220 }],
+    id:'syrna-pavutynka', name:'Сирна Павутинка (Соломка)', emoji:'🧀', cat:'syr',
+    img:'images/syrna-pavutynka.jpg',
+    desc:'Сирна соломка-павутинка. Ніжна, тягуча, смачна.',
+    weights:[{label:'1 уп.',price:350}],
   },
 
-  // ── ГОРІХИ ──
+  // ════════════ ГРІНКИ ════════════
   {
-    id: 'fistashky', name: 'Фісташки Каліфорнія', emoji: '🥜', cat: 'orehy',
-    img: 'https://snackzone.com.ua/wp-content/uploads/2024/06/file-okunya-1-150x150.jpg',
-    desc: 'Смажені фісташки Каліфорнія. Преміум якість, великі та смачні.',
-    weights: [{ label: '500 г', price: 640 }],
+    id:'grinky-baget', name:'Грінки Багет', emoji:'🍞', cat:'grinky',
+    img:'images/grinky-baget.jpg',
+    desc:'Хрусткі грінки-багет. Широкий вибір смаків.',
+    flavors:['Бекон','Васабі','Гриби зі Сметаною','Раки з Кропом','Сало-Гірчиця','Сметана-Зелень','Холодець з Хріном','Часник'],
+    weights:[{label:'~1 кг',price:220}],
+  },
+  {
+    id:'grinky-khvyliasti', name:'Грінки Хвилясті', emoji:'🍞', cat:'grinky',
+    img:'images/grinky-khvyliasti.jpg',
+    desc:'Хвилясті грінки хрусткі — різноманіття смаків для кожного.',
+    flavors:['Бекон','Васабі','Гриби зі Сметаною','Раки з Кропом','Сало-Гірчиця','Сметана-Зелень','Холодець з Хріном','Часник'],
+    weights:[{label:'~1 кг',price:220}],
+  },
+
+  // ════════════ ГОРІХИ ════════════
+  {
+    id:'fistashky', name:'Фісташки Каліфорнія', emoji:'🥜', cat:'orehy',
+    img:'images/fistashky.jpg',
+    desc:'Смажені фісташки Каліфорнія. Преміум якість, великі та смачні.',
+    weights:[{label:'500 г',price:640}],
   },
 ];
 
-// ═══════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════
-let cart = []; // [{product, flavor, weight, qty, price}]
-let currentCat = 'all';
-let activeProd = null;
-let modalFlavor = null;
-let modalWeight = null;
-let modalQty = 1;
 
-// ═══════════════════════════════════════════════
-// CART HELPERS
-// ═══════════════════════════════════════════════
-function cartKey(pid, flavor, weight) {
-  return `${pid}__${flavor||''}__${weight}`;
+/* ════════════════════════════════════════
+   СТАН ДОДАТКУ
+════════════════════════════════════════ */
+let cart      = [];
+let currentCat= 'all';
+let activeProd= null;
+let modalFlavor= null;
+let modalWeight= null;
+let modalQtyVal= 1;
+
+
+/* ════════════════════════════════════════
+   НАВІГАЦІЯ МІЖ СТОРІНКАМИ
+════════════════════════════════════════ */
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('nav-' + name);
+  if (btn) btn.classList.add('active');
+  window.scrollTo(0,0);
 }
-function cartTotal() {
-  return cart.reduce((s, i) => s + i.price * i.qty, 0);
-}
-function cartCount() {
-  return cart.reduce((s, i) => s + i.qty, 0);
-}
-function productCartQty(pid) {
-  return cart.filter(i => i.pid === pid).reduce((s, i) => s + i.qty, 0);
-}
-function formatPriceStr(n) {
-  return n.toLocaleString('uk-UA') + ' ₴';
-}
+
+
+/* ════════════════════════════════════════
+   КОШИК — допоміжні функції
+════════════════════════════════════════ */
+function cartTotal()  { return cart.reduce((s,i) => s + i.price * i.qty, 0); }
+function cartCount()  { return cart.reduce((s,i) => s + i.qty, 0); }
+function productQty(pid) { return cart.filter(i => i.pid === pid).reduce((s,i) => s + i.qty, 0); }
+function fmt(n)       { return n.toLocaleString('uk-UA') + ' ₴'; }
 
 function updateGlobalUI() {
-  const count = cartCount();
-  const total = cartTotal();
-  const badge = document.getElementById('cartBadge');
-  badge.textContent = count;
-  badge.style.display = count > 0 ? 'flex' : 'none';
-  document.getElementById('botTotal').textContent = formatPriceStr(total);
-  document.getElementById('bottomBar').classList.toggle('vis', count > 0);
+  const cnt = cartCount();
+  const tot = cartTotal();
+  const cb  = document.getElementById('cartBadge');
+  const ncb = document.getElementById('navCartBadge');
+  cb.textContent  = cnt; cb.style.display  = cnt > 0 ? 'flex' : 'none';
+  ncb.textContent = cnt; ncb.style.display = cnt > 0 ? 'flex' : 'none';
 }
 
-// ═══════════════════════════════════════════════
-// RENDER GRID
-// ═══════════════════════════════════════════════
+
+/* ════════════════════════════════════════
+   РЕНДЕР СІТКИ ТОВАРІВ
+════════════════════════════════════════ */
 function renderGrid(products) {
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
@@ -738,11 +876,25 @@ function renderGrid(products) {
     return;
   }
   products.forEach(p => {
-    const qty = productCartQty(p.id);
-    const hasVariants = (p.flavors && p.flavors.length > 0) || p.weights.length > 1;
+    const qty = productQty(p.id);
+    const hasVariants = (p.flavors && p.flavors.length) || p.weights.length > 1;
     const priceMin = Math.min(...p.weights.map(w => w.price));
     const priceMax = Math.max(...p.weights.map(w => w.price));
-    const priceLabel = priceMin === priceMax ? formatPriceStr(priceMin) : `від ${formatPriceStr(priceMin)}`;
+    const priceLabel = priceMin === priceMax ? fmt(priceMin) : 'від ' + fmt(priceMin);
+
+    // Бейдж варіантів
+    let badge = '';
+    if (hasVariants) {
+      const parts = [];
+      if (p.flavors && p.flavors.length) parts.push(p.flavors.length + ' смаків');
+      if (p.weights.length > 1) parts.push(p.weights.length + ' ваги');
+      badge = `<div class="variants-badge">${parts.join(' · ')}</div>`;
+    }
+
+    // Фото або емодзі
+    const imgHtml = p.img
+      ? `<img src="${p.img}" alt="${p.name}" onload="this.previousElementSibling.style.display='none'" onerror="this.style.display='none'">`
+      : '';
 
     const card = document.createElement('div');
     card.className = 'p-card' + (qty > 0 ? ' in-cart' : '');
@@ -750,22 +902,22 @@ function renderGrid(products) {
     card.onclick = () => openProduct(p.id);
     card.innerHTML = `
       <div class="p-thumb">
-        <span>${p.emoji}</span>
-        <img src="${p.img}" alt="${p.name}" onerror="this.style.display='none'">
-        ${hasVariants ? `<div class="variants-badge">${p.flavors ? p.flavors.length + ' смаків' : ''} ${p.weights.length > 1 ? (p.flavors ? '· ' : '') + p.weights.length + ' ваги' : ''}</div>` : ''}
+        <span class="thumb-fallback">${p.emoji}</span>
+        ${imgHtml}
+        ${badge}
       </div>
       <div class="p-body">
         <div class="p-name">${p.name}</div>
         <div class="p-price">${priceLabel}</div>
         ${qty > 0
           ? `<div class="p-qty-ctrl">
-              <button class="q-btn" onclick="event.stopPropagation();changeCardQty('${p.id}',-1)">−</button>
-              <span class="q-num">${qty}</span>
-              <button class="q-btn" onclick="event.stopPropagation();openProduct('${p.id}')">+</button>
-            </div>`
+               <button class="q-btn" onclick="event.stopPropagation();cardDecr('${p.id}')">−</button>
+               <span class="q-num">${qty}</span>
+               <button class="q-btn" onclick="event.stopPropagation();openProduct('${p.id}')">+</button>
+             </div>`
           : `<button class="p-btn p-btn-choose" onclick="event.stopPropagation();openProduct('${p.id}')">
-              ${hasVariants ? 'Обрати варіант →' : '+ В кошик'}
-            </button>`
+               ${hasVariants ? 'Обрати варіант →' : '+ В кошик'}
+             </button>`
         }
       </div>`;
     grid.appendChild(card);
@@ -783,156 +935,131 @@ function applyFilters() {
 
 function filterCat(cat, btn) {
   currentCat = cat;
-  document.querySelectorAll('.cat').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.cat, .cat-all').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  const titles = { all:'Весь асортимент', ryba:'🐟 Снеки з Риби', ptytsia:'🍗 Снеки з Птиці', myaso:"🥩 Снеки з М'яса", syr:'🧀 Сир Сулугуні', grinky:'🍞 Грінки та Сухарики', orehy:'🥜 Горіхи' };
+  const titles = {all:'Весь асортимент',ryba:'🐟 Снеки з Риби',ptytsia:'🍗 Снеки з Птиці',myaso:"🥩 Снеки з М'яса",syr:'🧀 Сир Сулугуні',grinky:'🍞 Грінки та Сухарики',orehy:'🥜 Горіхи'};
   document.getElementById('secTitle').textContent = titles[cat] || 'Всі товари';
   applyFilters();
 }
 
-// remove one item from cart when pressing - on grid card
-function changeCardQty(pid, delta) {
-  // find last added item of this product
+function cardDecr(pid) {
   const items = cart.filter(i => i.pid === pid);
   if (!items.length) return;
   const last = items[items.length - 1];
-  last.qty = Math.max(0, last.qty + delta);
-  if (last.qty === 0) cart = cart.filter(i => i !== last);
+  last.qty--;
+  if (last.qty <= 0) cart = cart.filter(i => i !== last);
   updateGlobalUI();
   applyFilters();
 }
 
-// ═══════════════════════════════════════════════
-// PRODUCT MODAL
-// ═══════════════════════════════════════════════
+
+/* ════════════════════════════════════════
+   МОДАЛЬНЕ ВІКНО ТОВАРУ
+════════════════════════════════════════ */
 function openProduct(pid) {
   const p = PRODUCTS.find(x => x.id === pid);
   if (!p) return;
-  activeProd = p;
-  modalFlavor = null;
-  modalWeight = null;
-  modalQty = 1;
+  activeProd   = p;
+  modalFlavor  = null;
+  modalWeight  = null;
+  modalQtyVal  = 1;
 
   document.getElementById('prodName').textContent = p.name;
   document.getElementById('prodDesc').textContent = p.desc;
   document.getElementById('prodEmoji').textContent = p.emoji;
   const imgEl = document.getElementById('prodImgEl');
-  imgEl.src = p.img; imgEl.style.display = '';
-  document.getElementById('modalQty').textContent = 1;
+  if (p.img) { imgEl.src = p.img; imgEl.style.display = ''; }
+  else        { imgEl.src = ''; imgEl.style.display = 'none'; }
+  document.getElementById('modalQtyEl').textContent = 1;
   document.getElementById('variantWarn').style.display = 'none';
 
-  // Flavors
+  // Смаки
   const flavorSec = document.getElementById('flavorSection');
-  const flavorChips = document.getElementById('flavorChips');
   if (p.flavors && p.flavors.length) {
-    document.getElementById('flavorLabel').textContent = p.flavors.length > 3 ? `Смак (${p.flavors.length} варіантів)` : 'Смак';
-    flavorChips.innerHTML = p.flavors.map(f =>
-      `<div class="v-chip" onclick="selectFlavor('${f.replace(/'/g,"\\'")}',this)">${f}</div>`
+    document.getElementById('flavorLabel').textContent =
+      p.flavors.length > 4 ? `Смак (${p.flavors.length} варіантів)` : 'Смак';
+    document.getElementById('flavorChips').innerHTML = p.flavors.map(f =>
+      `<div class="v-chip" onclick="selFlavor('${f.replace(/'/g,"\\'")}',this)">${f}</div>`
     ).join('');
     flavorSec.style.display = '';
   } else {
     flavorSec.style.display = 'none';
   }
 
-  // Weights
+  // Вага
   const weightSec = document.getElementById('weightSection');
-  const weightChips = document.getElementById('weightChips');
+  const wchips    = document.getElementById('weightChips');
   if (p.weights.length > 1) {
-    weightChips.innerHTML = p.weights.map(w =>
-      `<div class="v-chip" onclick="selectWeight('${w.label}',${w.price},this)">${w.label} — ${formatPriceStr(w.price)}</div>`
+    wchips.innerHTML = p.weights.map(w =>
+      `<div class="v-chip" onclick="selWeight('${w.label}',${w.price},this)">${w.label} — ${fmt(w.price)}</div>`
     ).join('');
-    weightSec.style.display = '';
-    updateModalPrice();
   } else {
-    // single weight — auto-select
     modalWeight = p.weights[0];
-    weightChips.innerHTML = `<div class="v-chip sel">${p.weights[0].label} — ${formatPriceStr(p.weights[0].price)}</div>`;
-    weightSec.style.display = '';
-    updateModalPrice();
+    wchips.innerHTML = `<div class="v-chip sel">${p.weights[0].label} — ${fmt(p.weights[0].price)}</div>`;
   }
-
+  weightSec.style.display = '';
+  updateModalPrice();
   document.getElementById('prodOverlay').classList.add('show');
 }
 
-function selectFlavor(flavor, el) {
+function selFlavor(flavor, el) {
   modalFlavor = flavor;
   document.querySelectorAll('#flavorChips .v-chip').forEach(c => c.classList.remove('sel'));
   el.classList.add('sel');
   document.getElementById('variantWarn').style.display = 'none';
 }
-
-function selectWeight(label, price, el) {
-  modalWeight = { label, price };
+function selWeight(label, price, el) {
+  modalWeight = {label, price};
   document.querySelectorAll('#weightChips .v-chip').forEach(c => c.classList.remove('sel'));
   el.classList.add('sel');
   updateModalPrice();
   document.getElementById('variantWarn').style.display = 'none';
 }
-
 function updateModalPrice() {
-  const priceEl = document.getElementById('prodPrice');
-  const noteEl = document.getElementById('prodPriceNote');
+  const pe = document.getElementById('prodPrice');
+  const pn = document.getElementById('prodPriceNote');
   if (modalWeight) {
-    priceEl.textContent = formatPriceStr(modalWeight.price * modalQty);
-    noteEl.textContent = modalQty > 1 ? `${modalQty} × ${formatPriceStr(modalWeight.price)}` : '';
+    pe.textContent = fmt(modalWeight.price * modalQtyVal);
+    pn.textContent = modalQtyVal > 1 ? `${modalQtyVal} × ${fmt(modalWeight.price)}` : '';
   } else if (activeProd) {
-    const min = Math.min(...activeProd.weights.map(w => w.price));
-    const max = Math.max(...activeProd.weights.map(w => w.price));
-    priceEl.textContent = min === max ? formatPriceStr(min) : `від ${formatPriceStr(min)}`;
-    noteEl.textContent = 'Оберіть вагу';
+    const mn = Math.min(...activeProd.weights.map(w => w.price));
+    const mx = Math.max(...activeProd.weights.map(w => w.price));
+    pe.textContent = mn === mx ? fmt(mn) : 'від ' + fmt(mn);
+    pn.textContent = 'Оберіть вагу';
   }
 }
-
-function changeModalQty(delta) {
-  modalQty = Math.max(1, modalQty + delta);
-  document.getElementById('modalQty').textContent = modalQty;
+function changeModalQty(d) {
+  modalQtyVal = Math.max(1, modalQtyVal + d);
+  document.getElementById('modalQtyEl').textContent = modalQtyVal;
   updateModalPrice();
 }
-
 function addToCartFromModal() {
   const p = activeProd;
   if (!p) return;
-  // validation
-  const needFlavor = p.flavors && p.flavors.length > 0;
-  if (needFlavor && !modalFlavor) {
-    document.getElementById('variantWarn').style.display = 'block';
-    return;
+  if (p.flavors && p.flavors.length && !modalFlavor) {
+    document.getElementById('variantWarn').style.display = 'block'; return;
   }
   if (!modalWeight) {
-    document.getElementById('variantWarn').style.display = 'block';
-    return;
+    document.getElementById('variantWarn').style.display = 'block'; return;
   }
-
-  const key = cartKey(p.id, modalFlavor, modalWeight.label);
-  const existing = cart.find(i => i.key === key);
-  if (existing) {
-    existing.qty += modalQty;
-  } else {
-    cart.push({
-      key, pid: p.id, name: p.name, emoji: p.emoji,
-      flavor: modalFlavor, weight: modalWeight.label,
-      price: modalWeight.price, qty: modalQty
-    });
-  }
-
+  const key = `${p.id}__${modalFlavor||''}__${modalWeight.label}`;
+  const ex  = cart.find(i => i.key === key);
+  if (ex) ex.qty += modalQtyVal;
+  else cart.push({key, pid:p.id, name:p.name, emoji:p.emoji, flavor:modalFlavor, weight:modalWeight.label, price:modalWeight.price, qty:modalQtyVal});
   updateGlobalUI();
   applyFilters();
-
-  // close with slight delay for feedback
-  setTimeout(() => {
-    document.getElementById('prodOverlay').classList.remove('show');
-  }, 180);
+  setTimeout(() => document.getElementById('prodOverlay').classList.remove('show'), 180);
 }
-
 function closeProd(e) {
   if (e.target === document.getElementById('prodOverlay'))
     document.getElementById('prodOverlay').classList.remove('show');
 }
 
-// ═══════════════════════════════════════════════
-// CART
-// ═══════════════════════════════════════════════
-function openCart() {
+
+/* ════════════════════════════════════════
+   КОШИК
+════════════════════════════════════════ */
+function openCartSheet() {
   const container = document.getElementById('cartItems');
   if (!cart.length) {
     container.innerHTML = '<div class="cart-empty">🛒<br><br>Кошик порожній<br><small>Додайте смаколики!</small></div>';
@@ -943,38 +1070,36 @@ function openCart() {
         <div class="ci-info">
           <div class="ci-name">${item.name}</div>
           <div class="ci-variant">${[item.flavor, item.weight].filter(Boolean).join(' · ')}</div>
-          <div class="ci-price">${formatPriceStr(item.price * item.qty)}</div>
+          <div class="ci-price">${fmt(item.price * item.qty)}</div>
         </div>
         <div class="ci-ctrl">
           <button class="ci-btn" onclick="changeCartItem(${idx},-1)">−</button>
           <span class="ci-qty">${item.qty}</span>
           <button class="ci-btn" onclick="changeCartItem(${idx},1)">+</button>
         </div>
-      </div>
-    `).join('');
+      </div>`).join('');
   }
   const total = cartTotal();
-  document.getElementById('cartTotal').textContent = formatPriceStr(total);
+  document.getElementById('cartTotal').textContent = fmt(total);
   document.getElementById('checkoutBtn').disabled = total < 1000;
   document.getElementById('cartOverlay').classList.add('show');
 }
-
-function changeCartItem(idx, delta) {
-  cart[idx].qty = Math.max(0, cart[idx].qty + delta);
+function changeCartItem(idx, d) {
+  cart[idx].qty = Math.max(0, cart[idx].qty + d);
   if (cart[idx].qty === 0) cart.splice(idx, 1);
   updateGlobalUI();
   applyFilters();
-  openCart();
+  openCartSheet();
 }
-
-function closeCart(e) {
+function closeCartSheet(e) {
   if (e.target === document.getElementById('cartOverlay'))
     document.getElementById('cartOverlay').classList.remove('show');
 }
 
-// ═══════════════════════════════════════════════
-// ORDER FORM
-// ═══════════════════════════════════════════════
+
+/* ════════════════════════════════════════
+   ФОРМА ЗАМОВЛЕННЯ
+════════════════════════════════════════ */
 function openForm() {
   document.getElementById('cartOverlay').classList.remove('show');
   document.getElementById('formOverlay').classList.add('show');
@@ -983,17 +1108,16 @@ function closeForm(e) {
   if (e.target === document.getElementById('formOverlay'))
     document.getElementById('formOverlay').classList.remove('show');
 }
-
-function submitOrder() {
-  const name = document.getElementById('fName').value.trim();
+async function submitOrder() {
+  const name  = document.getElementById('fName').value.trim();
   const phone = document.getElementById('fPhone').value.trim();
   if (!name || !phone) { alert("Будь ласка, вкажіть ім'я та телефон"); return; }
 
-  // Build order text (for real app — send to Telegram bot API)
-  const lines = cart.map(i => `• ${i.name}${i.flavor ? ' [' + i.flavor + ']' : ''} ${i.weight} × ${i.qty} = ${formatPriceStr(i.price * i.qty)}`);
-  const total = cartTotal();
-  const orderMsg = [
-    '🛒 НОВЕ ЗАМОВЛЕННЯ — Snack Zone',
+  const lines = cart.map(i =>
+    `• ${i.name}${i.flavor ? ' ['+i.flavor+']' : ''} ${i.weight} × ${i.qty} = ${fmt(i.price*i.qty)}`
+  );
+  const msg = [
+    '🛒 <b>НОВЕ ЗАМОВЛЕННЯ — Snack Zone</b>',
     `👤 ${name}`,
     `📞 ${phone}`,
     `📦 ${document.getElementById('fAddress').value || '—'}`,
@@ -1001,20 +1125,39 @@ function submitOrder() {
     '',
     ...lines,
     '',
-    `💰 РАЗОМ: ${formatPriceStr(total)}`
+    `💰 <b>РАЗОМ: ${fmt(cartTotal())}</b>`
   ].join('\n');
-  console.log(orderMsg); // → тут замінити на fetch до Telegram Bot API
 
-  cart = [];
-  updateGlobalUI();
-  applyFilters();
-  document.getElementById('formOverlay').classList.remove('show');
-  document.getElementById('success').classList.add('show');
+  const btn = document.querySelector('#formOverlay .checkout-btn');
+  btn.textContent = '⏳ Відправляємо...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('/api/send-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: msg })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Помилка сервера');
+
+    cart = [];
+    updateGlobalUI();
+    applyFilters();
+    document.getElementById('formOverlay').classList.remove('show');
+    document.getElementById('success').classList.add('show');
+
+  } catch (err) {
+    alert('Помилка відправки. Спробуйте ще раз або напишіть нам у Telegram.');
+    console.error(err);
+  } finally {
+    btn.textContent = 'ВІДПРАВИТИ ЗАМОВЛЕННЯ 🚀';
+    btn.disabled = false;
+  }
 }
 
-// ═══════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════
+
+/* ════════════ INIT ════════════ */
 applyFilters();
 </script>
 </body>
