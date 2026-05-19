@@ -1110,41 +1110,57 @@ function closeForm(e) {
   if (e.target === document.getElementById('formOverlay'))
     document.getElementById('formOverlay').classList.remove('show');
 }
-function submitOrder() {
+async function submitOrder() {
   const name  = document.getElementById('fName').value.trim();
   const phone = document.getElementById('fPhone').value.trim();
   if (!name || !phone) { alert("Будь ласка, вкажіть ім'я та телефон"); return; }
 
-  // ╔═══════════════════════════════════════════════════════╗
-  // ║ 👉 ТУТ ПІДКЛЮЧИТИ TELEGRAM BOT API                   ║
-  // ║ Замініть console.log на fetch до вашого бота:         ║
-  // ║                                                       ║
-  // ║ const BOT_TOKEN = 'ВАШ_ТОКЕН';                       ║
-  // ║ const CHAT_ID   = 'ВАШ_CHAT_ID';                     ║
-  // ║ await fetch(`https://api.telegram.org/bot${BOT_TOKEN} ║
-  // ║   /sendMessage`, { method:'POST',                     ║
-  // ║   headers:{'Content-Type':'application/json'},        ║
-  // ║   body: JSON.stringify({chat_id:CHAT_ID, text:msg})   ║
-  // ║ });                                                   ║
-  // ╚═══════════════════════════════════════════════════════╝
+  const BOT_TOKEN = '8623211491:AAFgMMBQY-3BX7QRMAEbujoD96UEdAB30pY';
+  const CHAT_ID   = '7403877638';
+
   const lines = cart.map(i =>
     `• ${i.name}${i.flavor ? ' ['+i.flavor+']' : ''} ${i.weight} × ${i.qty} = ${fmt(i.price*i.qty)}`
   );
   const msg = [
     '🛒 НОВЕ ЗАМОВЛЕННЯ — Snack Zone',
-    `👤 ${name}`, `📞 ${phone}`,
-    `📦 ${document.getElementById('fAddress').value||'—'}`,
-    `💬 ${document.getElementById('fComment').value||'—'}`,
-    '', ...lines, '',
+    `👤 ${name}`,
+    `📞 ${phone}`,
+    `📦 ${document.getElementById('fAddress').value || '—'}`,
+    `💬 ${document.getElementById('fComment').value || '—'}`,
+    '',
+    ...lines,
+    '',
     `💰 РАЗОМ: ${fmt(cartTotal())}`
   ].join('\n');
-  console.log(msg);
 
-  cart = [];
-  updateGlobalUI();
-  applyFilters();
-  document.getElementById('formOverlay').classList.remove('show');
-  document.getElementById('success').classList.add('show');
+  // Показуємо лоадер на кнопці
+  const btn = document.querySelector('#formOverlay .checkout-btn');
+  btn.textContent = '⏳ Відправляємо...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: CHAT_ID, text: msg })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.description);
+
+    // Успіх
+    cart = [];
+    updateGlobalUI();
+    applyFilters();
+    document.getElementById('formOverlay').classList.remove('show');
+    document.getElementById('success').classList.add('show');
+
+  } catch (err) {
+    alert('Помилка відправки. Спробуйте ще раз або зв\'яжіться з нами у Telegram.');
+    console.error(err);
+  } finally {
+    btn.textContent = 'ВІДПРАВИТИ ЗАМОВЛЕННЯ 🚀';
+    btn.disabled = false;
+  }
 }
 
 
