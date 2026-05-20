@@ -1139,7 +1139,10 @@ async function submitOrder() {
   try {
     const res = await fetch('/api/send-order', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-secret-key': 'yfqrhfoscytrbvehfit7575rf'
+      },
       body: JSON.stringify({ text: msg })
     });
     const data = await res.json();
